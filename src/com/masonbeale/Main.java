@@ -2,6 +2,7 @@ package com.masonbeale;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
@@ -23,7 +24,7 @@ public class Main {
         System.out.println();
 
         while(stillPlaying){
-            System.out.println("Lives: " + lives);
+            System.out.println("\n\nLives: " + lives);
             System.out.print("Enter a letter: ");
             currentGuess = scanner.next();
 
@@ -38,9 +39,14 @@ public class Main {
             }
             stillPlaying = CheckWinLoss(correctGuesses, lives, hiddenWord);
 
+            stillPlaying = GuessWord(scanner, stillPlaying, hiddenWord);
+
+
             previousCorrectGuesses = SetupNextRound(currentGuess, correctGuesses, guessedLetters);
         }
     }
+
+
 
     private static int checkCorrectGuesses(String currentGuess, int correctGuesses, LettersForWord[] lettersOfWord) {
         for(int i = 0; i < lettersOfWord.length; i++){
@@ -104,13 +110,23 @@ public class Main {
         }
         return true;
     }
-
+    private static boolean GuessWord(Scanner scanner, boolean stillPlaying, String hiddenWord) {
+        System.out.println("\nWould you like to guess the word? y/n");
+        String answer = scanner.next().toLowerCase(Locale.ROOT);
+        if(answer.equals("y")){
+            System.out.println("Enter Guess: ");
+            String Guess = scanner.next().toLowerCase();
+            if (Guess.equals(hiddenWord.toLowerCase())){
+                System.out.println("\nYou won!");
+                stillPlaying = false;
+            }
+        }
+        return stillPlaying;
+    }
     private static int SetupNextRound(String currentGuess, int correctGuesses, List<String> guessedLetters) {
         int previousCorrectGuesses;
         guessedLetters.add(currentGuess);
         previousCorrectGuesses = correctGuesses;
-        System.out.println();
-        System.out.println();
         return previousCorrectGuesses;
     }
 }
