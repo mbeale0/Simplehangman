@@ -40,7 +40,7 @@ public class Hangman {
             }
             stillPlaying = hangman.CheckWinLoss(correctGuesses, lives, hiddenWord);
 
-            stillPlaying = hangman.GuessWord(scanner, stillPlaying, hiddenWord);
+            stillPlaying = hangman.GuessWord(hiddenWord);
 
 
             previousCorrectGuesses = hangman.SetupNextRound(currentGuess, correctGuesses, guessedLetters);
