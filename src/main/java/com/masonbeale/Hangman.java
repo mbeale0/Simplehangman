@@ -111,18 +111,19 @@ public class Hangman {
         }
         return true;
     }
-    protected boolean GuessWord(Scanner scanner, boolean stillPlaying, String hiddenWord) {
+    protected boolean GuessWord(String hiddenWord) {
         System.out.println("\nWould you like to guess the word? y/n");
+        Scanner scanner = new Scanner(System.in);
         String answer = scanner.next().toLowerCase(Locale.ROOT);
         if(answer.equals("y")){
             System.out.println("Enter Guess: ");
             String Guess = scanner.next().toLowerCase();
             if (Guess.equals(hiddenWord.toLowerCase())){
                 System.out.println("\nYou won!");
-                stillPlaying = false;
+                return false;
             }
         }
-        return stillPlaying;
+        return true;
     }
     protected int SetupNextRound(String currentGuess, int correctGuesses, List<String> guessedLetters) {
         int previousCorrectGuesses;

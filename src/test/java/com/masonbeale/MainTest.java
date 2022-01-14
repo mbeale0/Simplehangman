@@ -16,5 +16,13 @@ class HangmanClassTest {
         assertFalse(loss);
         assertFalse(win);
     }
+    @Test
+    @DisplayName("Check guess name method")
+    void checkGuessName(){
+        Hangman hangman = new Hangman();
+        // currently, word argument is like main function and not dynamic
+        boolean correctWord = hangman.GuessWord("moose");
+        assertTrue(correctWord);
+    }
 
 }
