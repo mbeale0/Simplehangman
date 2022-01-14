@@ -15,7 +15,7 @@ class HangmanClassTest {
         boolean loss = hangman.CheckWinLoss(-1, 0, "Test");
         boolean win = hangman.CheckWinLoss(4, 5, "Test");
 
-        assertFalse(loss);
+        assertTrue(loss);
         assertFalse(win);
     }
     // need to figure out how to test function that needs user input
