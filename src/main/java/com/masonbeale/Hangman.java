@@ -5,8 +5,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
 
-public class Main {
+public class Hangman {
     public static void main(String[] args) {
+        Hangman hangman = new Hangman();
         Scanner scanner = new Scanner(System.in);
         String currentGuess;
         boolean stillPlaying = true;
@@ -20,7 +21,7 @@ public class Main {
         hiddenWord.toLowerCase();
         LettersForWord lettersOfWord[] = new LettersForWord[hiddenWord.length()];
 
-        SetupGame(hiddenWord, lettersOfWord);
+        hangman.SetupGame(hiddenWord, lettersOfWord);
         System.out.println();
 
         while(stillPlaying){
@@ -28,27 +29,27 @@ public class Main {
             System.out.print("Enter a letter: ");
             currentGuess = scanner.next();
 
-            currentGuess = CheckUserInput(scanner, currentGuess, guessedLetters);
+            currentGuess = hangman.CheckUserInput(scanner, currentGuess, guessedLetters);
 
 
             currentGuess.toLowerCase();
-            correctGuesses = checkCorrectGuesses(currentGuess, correctGuesses, lettersOfWord);
+            correctGuesses = hangman.checkCorrectGuesses(currentGuess, correctGuesses, lettersOfWord);
 
             if(correctGuesses == previousCorrectGuesses){
                 lives--;
             }
-            stillPlaying = CheckWinLoss(correctGuesses, lives, hiddenWord);
+            stillPlaying = hangman.CheckWinLoss(correctGuesses, lives, hiddenWord);
 
-            stillPlaying = GuessWord(scanner, stillPlaying, hiddenWord);
+            stillPlaying = hangman.GuessWord(scanner, stillPlaying, hiddenWord);
 
 
-            previousCorrectGuesses = SetupNextRound(currentGuess, correctGuesses, guessedLetters);
+            previousCorrectGuesses = hangman.SetupNextRound(currentGuess, correctGuesses, guessedLetters);
         }
     }
 
 
 
-    private static int checkCorrectGuesses(String currentGuess, int correctGuesses, LettersForWord[] lettersOfWord) {
+    protected int checkCorrectGuesses(String currentGuess, int correctGuesses, LettersForWord[] lettersOfWord) {
         for(int i = 0; i < lettersOfWord.length; i++){
             if(currentGuess.charAt(0) == lettersOfWord[i].getLetter()){
                 lettersOfWord[i].setLetterKnown(true);
@@ -64,7 +65,7 @@ public class Main {
         return correctGuesses;
     }
 
-    private static void SetupGame(String hiddenWord, LettersForWord[] lettersOfWord) {
+    protected void SetupGame(String hiddenWord, LettersForWord[] lettersOfWord) {
         for(int i = 0; i < hiddenWord.length(); i++){
             lettersOfWord[i] = new LettersForWord(hiddenWord.charAt(i));
             // no checking needs to be done on first output as all letters are blank
@@ -72,7 +73,7 @@ public class Main {
         }
     }
 
-    private static String CheckUserInput(Scanner scanner, String currentGuess, List<String> guessedLetters) {
+    protected String CheckUserInput(Scanner scanner, String currentGuess, List<String> guessedLetters) {
         boolean gettingUserInput = true;
         boolean isInputChar = false;
         boolean isInputNewGuess = false;
@@ -99,7 +100,7 @@ public class Main {
         return currentGuess;
     }
 
-    private static boolean CheckWinLoss(int correctGuesses, int lives, String hiddenWord) {
+    protected boolean CheckWinLoss(int correctGuesses, int lives, String hiddenWord) {
         if(correctGuesses == hiddenWord.length()) {
             System.out.println("\n\nyou won!");
             return false;
@@ -110,7 +111,7 @@ public class Main {
         }
         return true;
     }
-    private static boolean GuessWord(Scanner scanner, boolean stillPlaying, String hiddenWord) {
+    protected boolean GuessWord(Scanner scanner, boolean stillPlaying, String hiddenWord) {
         System.out.println("\nWould you like to guess the word? y/n");
         String answer = scanner.next().toLowerCase(Locale.ROOT);
         if(answer.equals("y")){
@@ -123,7 +124,7 @@ public class Main {
         }
         return stillPlaying;
     }
-    private static int SetupNextRound(String currentGuess, int correctGuesses, List<String> guessedLetters) {
+    protected int SetupNextRound(String currentGuess, int correctGuesses, List<String> guessedLetters) {
         int previousCorrectGuesses;
         guessedLetters.add(currentGuess);
         previousCorrectGuesses = correctGuesses;

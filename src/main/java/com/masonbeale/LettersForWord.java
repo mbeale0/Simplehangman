@@ -4,6 +4,9 @@ public class LettersForWord {
     private boolean isLetterKnown = false;
     private char letter;
 
+    public LettersForWord() {
+    }
+
     public LettersForWord(char letter) {
         this.letter = letter;
     }
