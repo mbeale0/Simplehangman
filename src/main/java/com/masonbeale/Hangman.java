@@ -1,52 +1,101 @@
 package com.masonbeale;
 
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.Random;
 
 public class Hangman {
     public static void main(String[] args) {
         Hangman hangman = new Hangman();
         Scanner scanner = new Scanner(System.in);
-        String currentGuess;
+        String currentUserGuess;
         boolean stillPlaying = true;
         int correctGuesses = 0;
         int previousCorrectGuesses = 0;
-        int lives = 5;
-        List<String> guessedLetters = new ArrayList<String>();
+        int lives = 10;
+        String hiddenWord;
+        List<String> possibleWords = new ArrayList<>();
+        List<String> guessedLetters = new ArrayList<>();
 
-	    // hidden word will be pre-determined to start, then more dynamic after
-        String hiddenWord = "moose";
-        hiddenWord.toLowerCase();
-        LettersForWord lettersOfWord[] = new LettersForWord[hiddenWord.length()];
+        ReadInWords(possibleWords);
+        hiddenWord = PickRandomWord(possibleWords);
+        LettersForWord[] lettersOfWord = SetupGame(hiddenWord);
 
-        hangman.SetupGame(hiddenWord, lettersOfWord);
-        System.out.println();
 
         while(stillPlaying){
-            System.out.println("\n\nLives: " + lives);
-            System.out.print("Enter a letter: ");
-            currentGuess = scanner.next();
+            PrintInfo(lives, hiddenWord, lettersOfWord);
 
-            currentGuess = hangman.CheckUserInput(scanner, currentGuess, guessedLetters);
+            currentUserGuess = hangman.HandleUserInput(scanner, guessedLetters);
 
-
-            currentGuess.toLowerCase();
-            correctGuesses = hangman.checkCorrectGuesses(currentGuess, correctGuesses, lettersOfWord);
+            correctGuesses = hangman.checkCorrectGuesses(currentUserGuess, correctGuesses, lettersOfWord);
 
             if(correctGuesses == previousCorrectGuesses){
                 lives--;
             }
             stillPlaying = hangman.CheckWinLoss(correctGuesses, lives, hiddenWord);
 
-            stillPlaying = hangman.GuessWord(hiddenWord);
+            if((stillPlaying) && (correctGuesses > previousCorrectGuesses)){
+                stillPlaying = hangman.GuessWord(hiddenWord);
+            }
 
-
-            previousCorrectGuesses = hangman.SetupNextRound(currentGuess, correctGuesses, guessedLetters);
+            previousCorrectGuesses = hangman.SetupNextRound(currentUserGuess, correctGuesses, guessedLetters);
         }
     }
 
+
+
+    private static void PrintInfo(int lives, String hiddenWord, LettersForWord[] lettersOfWord) {
+        System.out.println("\n\nLives: " + lives);
+        for(int i = 0; i < hiddenWord.length(); i++){
+            if(lettersOfWord[i].isLetterKnown()){
+                System.out.print(lettersOfWord[i].getLetter());
+            }
+            else{
+                System.out.print("_");
+            }
+        }
+    }
+
+
+    private static String PickRandomWord(List<String> possibleWords) {
+        String hiddenWord;
+        Random rand = new Random();
+        int upperbound = possibleWords.size()-1;
+        int randomNumber = rand.nextInt(upperbound);
+        hiddenWord = possibleWords.get(randomNumber);
+        return hiddenWord;
+    }
+
+    private static LettersForWord[] SetupGame(String hiddenWord) {
+        System.out.println("Welcome to Hangman!");
+        LettersForWord lettersOfWord[] = new LettersForWord[hiddenWord.length()];
+        for(int i = 0; i < hiddenWord.length(); i++){
+            lettersOfWord[i] = new LettersForWord(hiddenWord.charAt(i));
+        }
+        return lettersOfWord;
+    }
+
+    private static void ReadInWords(List<String> possibleWords) {
+        Scanner fileScanner = null;
+        try {
+            fileScanner = new Scanner(new FileReader("words.txt"));
+            fileScanner.useDelimiter(",");
+            while (fileScanner.hasNext()){
+                possibleWords.add(fileScanner.nextLine().toLowerCase());
+
+            }
+        }catch (IOException e){
+            e.printStackTrace();
+        }finally {
+            if(fileScanner != null){
+                fileScanner.close();
+            }
+        }
+    }
 
 
     protected int checkCorrectGuesses(String currentGuess, int correctGuesses, LettersForWord[] lettersOfWord) {
@@ -65,18 +114,14 @@ public class Hangman {
         return correctGuesses;
     }
 
-    protected void SetupGame(String hiddenWord, LettersForWord[] lettersOfWord) {
-        for(int i = 0; i < hiddenWord.length(); i++){
-            lettersOfWord[i] = new LettersForWord(hiddenWord.charAt(i));
-            // no checking needs to be done on first output as all letters are blank
-            System.out.print("_");
-        }
-    }
 
-    protected String CheckUserInput(Scanner scanner, String currentGuess, List<String> guessedLetters) {
+    protected String HandleUserInput(Scanner scanner, List<String> guessedLetters) {
         boolean gettingUserInput = true;
         boolean isInputChar = false;
         boolean isInputNewGuess = false;
+
+        System.out.print("\nEnter a letter: ");
+        String currentGuess = scanner.next();
 
         while (gettingUserInput){
             if(currentGuess.length() == 1){
@@ -97,6 +142,7 @@ public class Hangman {
                 gettingUserInput = false;
             }
         }
+        currentGuess.toLowerCase();
         return currentGuess;
     }
 

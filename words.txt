@@ -1,0 +1,16 @@
+chicken
+horse
+college
+computer
+game
+video
+monitor
+table
+bottle
+console
+vehicle
+keyboard
+backpack
+ocean
+hotel
+apartment
